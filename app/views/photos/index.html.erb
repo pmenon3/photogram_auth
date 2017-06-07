@@ -9,24 +9,94 @@
   <div class="col-md-12">
     <table class="table table-striped table-hover">
       <tr>
-        <th>Caption</th>
         <th>Image</th>
+        <th>Caption</th>
         <th>User</th>
         <th>Actions</th>
       </tr>
 
       <% @photos.each do |photo| %>
-      <tr>
-        <td><%= photo.caption %></td>
-        <td><%= photo.image %></td>
-        <td><%= photo.user_id %></td>
-        <td>
-          <a href="/photos/<%= photo.id %>" class="btn btn-primary">Show</a>
-          <a href="/photos/<%= photo.id %>/edit" class="btn btn-warning">Edit</a>
-          <a href="/delete_photo/<%= photo.id %>" class="btn btn-danger" rel="nofollow">Delete</a>
-        </td>
-      </tr>
-      <% end %>
-    </table>
-  </div>
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">
+                <a href="/users/<%= photo.user_id %>">
+                  <%= User.find(photo.user_id).username%>
+                </a>
+                <small>
+                  <%= time_ago_in_words(photo.created_at) %> ago
+                </small>
+              </h3>
+            </div>
+            <div class="panel-body">
+              <a href="photos/<%= photo.id %>">
+                <img src="<%= photo.image %>" class="img-responsive">
+              </a>
+
+              <form action="/create_like" method="post">
+                <input type="hidden" name="photo_id" value="<%= photo.id %>">
+
+                <input type="hidden" name="user_id" value="<%= photo.user_id %>">
+
+                <button class="btn btn-link">
+                  <i class="fa fa-heart-o"></i>
+                </button>
+              </form>
+
+
+              <a href="/delete_like/510" class="btn btn-link">
+                <i class="fa fa-heart"></i>
+              </a>
+              testtest, chelsea, steph, alex@yahoo.com, bobthebuilder, and jjj
+              like
+              this
+            </p>
+
+            <ul class="media-list">
+              <li class="media">
+                <div class="media-body">
+                  <h6 class="media-heading">
+                    <%= Comment.where({:photo_id => photo.id}) %>
+                  </h6>
+                </div>
+              </li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+      <td><%= photo.image %></td>
+      <td><%= photo.caption %></td>
+      <td><%= photo.user_id %></td>
+      <td>
+        <a href="/photos/<%= photo.id %>" class="btn btn-primary">Show</a>
+        <% if current_user.id == photo.user_id  %>
+        <a href="/photos/<%= photo.id %>/edit" class="btn btn-warning">
+          Edit
+        </a>
+        <a href="/delete_photo/<%= photo.id %>" class="btn btn-danger" rel="nofollow">
+          Delete
+        </a>
+        <% else %>
+        <% end %>
+      </td>
+    </tr>
+    <% end %>
+  </table>
+</div>
 </div>
