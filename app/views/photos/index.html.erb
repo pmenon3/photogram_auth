@@ -35,68 +35,84 @@
                 <img src="<%= photo.image %>" class="img-responsive">
               </a>
 
+
+              <!-- check if the current user liked this photo -->
+              <% if photo.likes.find_by(user_id: current_user.id) == nil %>
+              <!-- user hasn't liked it -->
+
               <form action="/create_like" method="post">
+
+                <!-- Hidden input for authenticity token to protect from forgery -->
+                <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
                 <input type="hidden" name="photo_id" value="<%= photo.id %>">
 
                 <input type="hidden" name="user_id" value="<%= photo.user_id %>">
 
                 <button class="btn btn-link">
                   <i class="fa fa-heart-o"></i>
+
                 </button>
               </form>
 
+              <% else %>
 
-              <a href="/delete_like/510" class="btn btn-link">
+              <a href="/delete_like/<%= photo.likes.find_by(user_id: current_user.id).id %>" class="btn btn-link">
                 <i class="fa fa-heart"></i>
               </a>
-              testtest, chelsea, steph, alex@yahoo.com, bobthebuilder, and jjj
-              like
-              this
-            </p>
 
-            <ul class="media-list">
-              <li class="media">
-                <div class="media-body">
-                  <h6 class="media-heading">
-                    <%= Comment.where({:photo_id => photo.id}) %>
-                  </h6>
-                </div>
-              </li>
-            </ul>
+              <% end %>
 
+
+              <% Comment.where({:photo_id => photo.id}).each do |comment| %>
+
+              <ul class="media-list">
+                <li class="media">
+                  <div class="media-body">
+                    <h6 class="media-heading">
+                      <a href="/users/<%= User.find_by(:id => comment.user_id).id %>">
+                        <%= User.find_by(:id => comment.user_id).username %>
+                      </a>
+                      <small>
+                        <%= time_ago_in_words(comment.created_at) %> ago
+                      </small>
+                    </h6>
+                    <%= comment.body %>
+                  </div>
+                </li>
+              </ul>
+              <% end  %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <tr>
+                <td><%= photo.image %></td>
+                <td><%= photo.caption %></td>
+                <td><%= photo.user_id %></td>
+                <td>
+                  <a href="/photos/<%= photo.id %>" class="btn btn-primary">Show</a>
+                  <% if current_user.id == photo.user_id  %>
+                  <a href="/photos/<%= photo.id %>/edit" class="btn btn-warning">
+                    Edit
+                  </a>
+                  <a href="/delete_photo/<%= photo.id %>" class="btn btn-danger" rel="nofollow">
+                    Delete
+                  </a>
+                  <% else %>
+                  <% end %>
+                </td>
+              </tr>
+              <% end %>
+            </table>
           </div>
         </div>
-      </div>
-    </div>
-
-
-
-
-
-
-
-
-
-
-
-    <tr>
-      <td><%= photo.image %></td>
-      <td><%= photo.caption %></td>
-      <td><%= photo.user_id %></td>
-      <td>
-        <a href="/photos/<%= photo.id %>" class="btn btn-primary">Show</a>
-        <% if current_user.id == photo.user_id  %>
-        <a href="/photos/<%= photo.id %>/edit" class="btn btn-warning">
-          Edit
-        </a>
-        <a href="/delete_photo/<%= photo.id %>" class="btn btn-danger" rel="nofollow">
-          Delete
-        </a>
-        <% else %>
-        <% end %>
-      </td>
-    </tr>
-    <% end %>
-  </table>
-</div>
-</div>
